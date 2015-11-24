@@ -1,3 +1,6 @@
+(newline)
+(newline)
+
 ; 1.29
 (define (sum term a next b) 
   (if (> a b)
@@ -143,9 +146,61 @@
 
 (define (average x y) (/ (+ x y) 2))
 
-(fixed-point-with-print (lambda (x) (+ 1 (/ 1 x))) 2.0)
-(newline)
-(fixed-point-with-print (lambda (x) (average x (+ 1 (/ 1 x)))) 2.0)
+; (fixed-point-with-print (lambda (x) (+ 1 (/ 1 x))) 2.0)
+; (newline)
+; (fixed-point-with-print (lambda (x) (average x (+ 1 (/ 1 x)))) 2.0)
+; (newline)
+
+
+; 1.37
+
+; recursive
+; (define (cont-frac n d k)
+;   (define (k-term kk)
+;     (if (> kk k)
+;         0
+;         (/ (n kk) (+ (d kk) (k-term (+ 1 kk))))))
+;   (k-term 1))
+
+; iterative
+(define (cont-frac n d k)
+  (define (k-term-iter kk result)
+    (if (< kk 1)
+        result
+        (k-term-iter (- kk 1) (/ (n kk) (+ (d kk) result)))))
+  (k-term-iter k 0))
+
+; (display (/ 1.0
+;             (cont-frac (lambda (i) 1.0)
+;                        (lambda (i) 1.0)
+;                        100)
+;   ))
+
+
+
+; 1.38
+; (display (+ 2
+;             (cont-frac (lambda (i) 1.0)
+;                        (lambda (i)
+;                           (if (= 2 (remainder i 3))
+;                               (* 2 (+ 1 (quotient i 3)))
+;                               1.0))
+;                         10000)
+;   ))
+
+
+
+; 1.39
+(define (tan-cf x k)
+  (cont-frac (lambda (i)
+                (if (= i 1)
+                    x
+                    (- (* x x))))
+             (lambda (i) (- (* 2 i) 1))
+             k))
+
+; (display (tan-cf 1 10))
+
 
 
 

@@ -203,4 +203,140 @@
 
 
 
+; 1.40
+(define dx 0.00001)
+(define (deriv g)
+  (lambda (x)
+    (/ (- (g (+ x dx)) (g x))
+       dx)))
+(define (newton-transform g)
+  (lambda (x)
+    (- x (/ (g x) 
+            ((deriv g) x)))))
+
+(define (newtons-method g guess)
+  (fixed-point (newton-transform g) 
+               guess))
+
+(define (cubic a b c)
+  (lambda (x)
+    (+ (* x x x) (* a x x) (* b x) c)))
+
+; (display (newtons-method (cubic 1 2 1) 1))
+
+
+
+; 1.41
+(define (double fn)
+  (lambda (x)
+    (fn (fn x))))
+
+; (display ((double inc) 1))
+
+; (((double (double double)) inc) 5) => 21
+; (((double (lambda (x) (double (double x)))) inc) 5)
+; (display (((lambda (x) ((double double) (double (double x)))) inc) 5))
+
+
+
+; 1.42
+(define (compose f g)
+  (lambda (x)
+    (f (g x))))
+
+; (display ((compose square inc) 6))
+
+
+
+; 1.43
+(define (repeated f n)
+  (define (iter nn result)
+    (if (> nn n)
+        result
+        (iter (+ nn 1) (f result))))
+  (lambda (x)
+    (iter 1 x)))
+
+; (display ((repeated square 2) 5))
+
+
+
+; 1.44
+(define (smooth f)
+  (lambda (x)
+    (/ ( + (f (- x dx)) 
+           (f x) 
+           (f (+ x dx)))
+        3)))
+
+(define (n-fold-smooth f n)
+  ((repeated smooth n) f))
+
+
+
+; 1.45
+; (define (sqrt x)
+;   (fixed-point (lambda (y) (average y (/ x y)))
+;                1.0))
+
+(define (average-damp f)
+  (lambda (x) 
+    (average x (f x))))
+
+(define (power x nn)
+  (if (> nn 0)
+      (* x (power x (- nn 1)))
+      1))
+
+(define (nth-root x n)
+  (define (log2 x)
+    (/ (log x) (log 2)))
+  (fixed-point ((repeated average-damp (ceiling (log2 n))) (lambda (y) (/ x (power y (- n 1)))))
+               1.0))
+
+; ((lambda (n) 
+;   (define (iter nn)
+;     (newline)
+;     (display nn)
+;     (display " ")
+;     (display (nth-root 2 nn))
+;     (if (> nn 1)
+;         (iter (- nn 1))
+;         1))
+;   (iter n)) 10)
+
+
+
+; 1.46
+(define (iterative-improve is-good-enough improve-guess)
+  (lambda (x)
+    (let ((improved-x (improve-guess x)))
+      (if (is-good-enough x improved-x)
+          improved-x
+          ((iterative-improve is-good-enough improve-guess) improved-x)))))
+
+; sqrt
+(define (sqrt x)
+  ((iterative-improve (lambda (a b) (< (abs (- a b)) tolerance))
+                      (average-damp (lambda (y) (/ x y))))
+                      1.0))
+
+; fixed-point
+(define (fixed-point-iter f first-guess)
+  ((iterative-improve (lambda (a b) (< (abs (- a b)) tolerance))
+                      f)
+                      first-guess))
+
+; (define (sqrt-iter x)
+;   (fixed-point-iter (lambda (y) (average y (/ x y)))
+;                     1.0))
+; (newline)
+; (display (sqrt-iter 2))
+
+
+
+
+
+
+
 

@@ -148,3 +148,99 @@
 
 
 
+; 2.6
+; one => (define one (lambda (f) (lambda (x) (f x))))
+
+; two => (define two (lambda (f) (lambda (x) (f ((one f) x))))))
+;     => (deinfe two (lambda (f) (lambda (x) (f ((lambda (y) (f y)) x)))))
+;     => (deinfe two (lambda (f) (lambda (x) (f (f x)))))
+
+; (define (my-add a b)
+;     (lambda (f)
+;       (lambda (x)
+;         ((a f) ((b f) x)))))
+
+
+
+; 2.7
+(define (add-interval x y)
+  (make-interval (+ (lower-bound x) 
+                    (lower-bound y))
+                 (+ (upper-bound x) 
+                    (upper-bound y))))
+
+(define (mul-interval x y)
+  (let ((p1 (* (lower-bound x) 
+               (lower-bound y)))
+        (p2 (* (lower-bound x) 
+               (upper-bound y)))
+        (p3 (* (upper-bound x) 
+               (lower-bound y)))
+        (p4 (* (upper-bound x) 
+               (upper-bound y))))
+    (make-interval (min p1 p2 p3 p4)
+                   (max p1 p2 p3 p4))))
+
+(define (div-interval x y)
+  (mul-interval x 
+                (make-interval 
+                 (/ 1.0 (upper-bound y)) 
+                 (/ 1.0 (lower-bound y)))))
+
+(define (make-interval a b) (cons a b))
+
+(define (upper-bound x)
+  (max (car x) (cdr x)))
+
+(define (lower-bound x)
+  (min (car x) (cdr x)))
+
+
+
+; 2.8
+(define (sub-interval x y)
+  (make-interval (- (lower-bound x) (upper-bound y))
+                 (- (upper-bound x) (lower-bound y))))
+
+
+; 2.9
+(define (width x)
+  (/ (- (upper-bound x) (lower-bound x)) 2))
+
+;    (width (add-interval x y))
+; => (/ (- (upper-bound (add-interval x y)) (lower-bound (add-interval x y))) 2)
+; => (/ (- (+ (upper-bound x) (upper-bound y)) (+ (lower-bound x) (lower-bound y))) 2)
+; => (/ (+ (- (upper-bound x) (lower-bound x)) (- (upper-bound y) (lower-bound y))) 2)
+; => (+ (/ (- (upper-bound x) (lower-bound x)) 2) (/ (- (upper-bound y) (lower-bound y)) 2))
+; => (+ (width x) (width y))
+
+; (define i1 (make-interval 4 5))
+; (define i2 (make-interval 1 2))
+; (define w1 (width (mul-interval i1 i2)))
+; (define w2 (* (width i1) (width i2)))
+; (newline)
+; (display (= w1 w2))
+
+
+
+; 2.10
+(define (div-interval-2 x y)
+  (if (>= 0 (* (lower-bound y) (upper-bound y)))
+      (error "Error: divide by a interval with span 0")
+      (mul-interval x 
+                    (make-interval 
+                      (/ 1.0 (upper-bound y)) 
+                      (/ 1.0 (lower-bound y))))))
+
+; (define i1 (make-interval 2 10))
+; (define span-0 (make-interval -1 9))
+; (display (div-interval-2 i1 span-0))
+
+
+
+; 2.12
+(define (make-center-percent c p)
+  (let ((diff (* c p 0.01)))
+    (make-interval (+ c diff)
+                   (- c diff))))
+

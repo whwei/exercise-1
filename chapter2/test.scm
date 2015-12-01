@@ -1,6 +1,7 @@
 (newline)
 (newline)
 (newline)
+(define nil '())
 
 ; 2.1
 (define (numer x) (car x))
@@ -243,4 +244,274 @@
   (let ((diff (* c p 0.01)))
     (make-interval (+ c diff)
                    (- c diff))))
+
+
+
+
+
+; 2.17
+(define (last-pair l)
+  (if (null? (cdr l))
+      (car l)
+      (last-pair (cdr l))))
+
+; (display (last-pair (list 23 72 149 34)))
+
+
+
+; 2.18
+; (define (reverse l)
+;   (if (null? (cdr l))
+;       l
+;       (append (reverse (cdr l)) (cons (car l) '()))))
+
+(define (reverse l)
+  (define (iter p result)
+    (if (null? p)
+        result
+        (iter (cdr p) (cons (car p) result))))
+  (iter l '()))
+
+; (display (reverse (list 1 4 9 16 25)))
+
+
+
+; 2.19
+(define us-coins 
+  (list 25 50 10 5 1))
+
+(define (cc amount coin-values)
+  (cond ((= amount 0) 
+         1)
+        ((or (< amount 0) 
+             (no-more? coin-values)) 
+         0)
+        (else
+         (+ (cc 
+             amount
+             (except-first-denomination 
+              coin-values))
+            (cc 
+             (- amount
+                (first-denomination 
+                 coin-values))
+             coin-values)))))
+
+(define (no-more? l)
+  (= 0 (length l)))
+
+(define (first-denomination l)
+  (car l))
+
+(define (except-first-denomination l)
+  (cdr l))
+
+; (define no-more? null?)
+; (define first-denomination car)
+; (define except-first-denomination cdr)
+
+; (display (cc 100 us-coins))
+
+
+
+; 2.20
+(define (same-parity first . args)
+  (define (iter l result rm)
+    (if (null? l)
+        result
+        (if (= rm (remainder (car l) 2))
+            (iter (cdr l) (append result (cons (car l) '())) rm)
+            (iter (cdr l) result rm))))
+  (iter args (list first) (remainder first 2)))
+
+; (display (same-parity 1 2 3 4 5 6 7))
+; (newline)
+; (display (same-parity 2 3 4 5 6 7))
+
+
+
+; 2.21
+(define (square-list items)
+  (if (null? items)
+      '()
+      (cons (square (car items)) 
+            (square-list (cdr items)))))
+
+; (define (square-list items)
+;   (map square items))
+
+; (display (square-list (list 1 2 3 4)))
+
+
+
+; 2.22
+; (define (square-list items)
+;   (define (iter things answer)
+;     (if (null? things)
+;         answer
+;         (iter (cdr things)
+;               (cons (square (car things))
+;                     answer))))
+;   (iter items nil))
+; answer = last transformed list 
+; next-answer = a new pair that (car pair) = [transform(current element)] and (cdr pair) = [last transformed list]
+; which cause the final list is in reverse order
+
+; (define (square-list items)
+;   (define (iter things answer)
+;     (if (null? things)
+;         answer
+;         (iter (cdr things)
+;               (cons answer
+;                     (square 
+;                      (car things))))))
+; answer = last transformed list 
+; next-answer = a new pair that (car pair) = [last transformed list] and (cdr pair) = [transform(current element)] 
+; which is in conflict with the definition of pairs in a list
+
+; (display (square-list (list 1 2 3 4)))
+
+
+
+; 2.23
+(define (for-each action items)
+  (cond 
+    ((null? items) #t)
+    (else (action (car items))
+          (for-each action (cdr items)))))
+
+; (for-each 
+;  (lambda (x) (newline) (display x))
+;  (list 57 321 88))
+
+
+
+
+; 2.25
+; (define items (list 1 3 (list 5 7) 9))
+; (display (car (cdr (car (cdr (cdr items))))))
+; (define items (cons (cons 7 nil) nil))
+; (display (car (car items)))
+; (define items (list 1 (list 2 (list 3 (list 4 (list 5 (list 6 7)))))))
+; (display (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr items)))))))))))))
+
+
+
+; 2.26
+; (1 2 3 4 5 6)
+; ((1 2 3) 4 5 6)
+; ((1 2 3) (4 5 6))
+
+
+
+
+; 2.27
+(define (deep-reverse l)
+  (define (iter p result)
+    (if (null? p)
+        result
+        (if (pair? (car p))
+            (iter (cdr p) (cons (deep-reverse (car p)) result))
+            (iter (cdr p) (cons (car p) result)))))
+  (iter l nil))
+(define x 
+  (list (list 1 2) (list 3 4)))
+; (display (reverse x))
+; (newline)
+; (display (deep-reverse x))
+
+
+
+; 2.28
+(define (fringe x)
+  (cond ((null? x) nil)
+        ((not (pair? x)) (list x))
+        (else (append (fringe (car x)) (fringe (cdr x))))))
+
+
+(define x 
+  (list (list 1 2) (list 3 4)))
+
+; (display (fringe x))
+; (newline)
+; (display (fringe (list x x)))
+
+
+
+; 2.29
+; (define (make-mobile left right)
+;   (list left right))
+
+; (define (make-branch length structure)
+;   (list length structure))
+
+; (define (left-branch m)
+;   (car m))
+
+; (define (right-branch m)
+;   (car (cdr m)))
+
+; (define (branch-length b)
+;   (car b))
+
+; (define (branch-structure b)
+;   (car (cdr b)))
+
+(define (branch-weight b)
+  (if (is-mobile? (branch-structure b))
+      (total-weight (branch-structure b))
+      (branch-structure b)))
+
+(define (is-mobile? x)
+  (pair? x))
+
+(define (total-weight m)
+  (+ (branch-weight (left-branch m))
+     (branch-weight (right-branch m))))
+
+(define (branch-balanced? b)
+  (if (is-mobile? (branch-structure b))
+      (balanced? (branch-structure b))
+      #t))
+
+(define (branch-torque b)
+  (* (branch-length b)
+     (branch-weight b)))
+
+(define (balanced? b)
+  (let ((l (left-branch b))
+        (r (right-branch b)))
+       (and (= (branch-torque l) (branch-torque r))
+            (branch-balanced? l)
+            (branch-balanced? r))))
+
+; (display (balanced? (make-mobile (make-branch 2 3) 
+;                          (make-branch 3 2))) )
+
+
+
+
+(define (make-mobile left right)
+  (cons left right))
+
+(define (make-branch length structure)
+  (cons length structure))
+
+(define (left-branch m)
+  (car m))
+
+(define (right-branch m)
+  (cdr m))
+
+(define (branch-length b)
+  (car b))
+
+(define (branch-structure b)
+  (cdr b))
+
+
+
+
+
+
 

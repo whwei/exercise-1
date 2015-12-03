@@ -567,22 +567,80 @@
 
 
 
+; 2.33
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+          (accumulate op 
+                      initial 
+                      (cdr sequence)))))
+
+
+(define (map p sequence)
+  (accumulate (lambda (x y) (append (cons (p x) nil) y)) 
+              nil sequence))
+
+; (display (map square (list 1 2 3)))
+
+(define (append seq1 seq2)
+  (accumulate cons seq2 seq1))
+
+; (display (append (list 1 2 3) (list 4 5 6)))
+
+(define (length sequence)
+  (accumulate (lambda (x y) (+ 1 y)) 0 sequence))
+
+; (display (length (list 1 2 3)))
+
+
+
+; 2.34
+(define 
+  (horner-eval x coefficient-sequence)
+  (accumulate 
+   (lambda (this-coeff higher-terms)
+     (+ (* higher-terms x) this-coeff))
+   0
+   coefficient-sequence))
+
+; (display (horner-eval 2 (list 1 3 0 5 0 1)))
+
+
+
+; 2.35
+(define (count-leaves t)
+  (accumulate 
+    +
+    0 
+    (map (lambda (node) 
+            (if (pair? node)
+                (count-leaves node)
+                1))
+         t)))
+
+
+
+; (define x (cons (list 1 2) (list 3 4)))
+
+; (display (count-leaves x))
+; (newline)
+; (list x x)
+
+; (display (count-leaves (list x x)))
 
 
 
 
+; 2.36
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+      nil
+      (cons (accumulate op init (map car seqs))
+            (accumulate-n op init (map cdr seqs)))))
 
-
-
-
-
-
-
-
-
-
-
-
+; (define sq (list (list 1 2 3) (list 4 5 6) (list 7 8 9) (list 10 11 12)))
+; (display (accumulate-n + 0 sq))
 
 
 

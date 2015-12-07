@@ -669,6 +669,116 @@
 
 
 
+; 2.38
+; both commutativity and associativity
+
+
+
+; 2.39
+(define (fold-left op initial sequence)
+  (define (iter result rest)
+    (if (null? rest)
+        result
+        (iter (op result (car rest))
+              (cdr rest))))
+  (iter initial sequence))
+
+(define fold-right accumulate)
+
+(define (reverse sequence)
+  (fold-right 
+   (lambda (x y) (append (reverse y) (cons x nil))) nil sequence))
+
+; (define (reverse sequence)
+;   (fold-left 
+;    (lambda (x y) (cons y (reverse x))) nil sequence))
+
+; (display (reverse (list 1 2 3 4)))
+
+
+
+; 2.40
+(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))
+
+(define (enumerate-interval low high)
+  (if (> low high)
+      nil
+      (cons low 
+            (enumerate-interval 
+             (+ low 1) 
+             high))))
+(define (unique-pairs n)
+  (flatmap (lambda (x) 
+              (map (lambda (y)
+                      (cons x y))
+                   (enumerate-interval 1 (- x 1))))
+           (enumerate-interval 1 n)))
+
+
+; (display (unique-pairs 5))
+
+
+
+; 2.41
+(define (triple-sum n s)
+  (define (triples n)
+    (flatmap (lambda (x) 
+                (flatmap (lambda (y)
+                            (map (lambda (z)
+                                    (list x y z))
+                                 (enumerate-interval 1 (- y 1))))
+                         (enumerate-interval 1 (- x 1))))
+             (enumerate-interval 1 n)))
+  (filter (lambda (list) (= s (accumulate + 0 list))) (triples n)))
+
+; (display (triple-sum 3 6))
+
+
+
+; 2.42
+(define (queens board-size)
+  (define (queen-cols k)
+    (if (= k 0)
+        (list empty-board)
+        (filter
+         (lambda (positions) 
+           (safe? k positions))
+         (flatmap
+          (lambda (rest-of-queens)
+            (map (lambda (new-row)
+                   (adjoin-position 
+                    new-row 
+                    k 
+                    rest-of-queens))
+                 (enumerate-interval 
+                  1 
+                  board-size)))
+          (queen-cols (- k 1))))))
+  (queen-cols board-size))
+
+(define empty-board nil)
+
+(define (adjoin-position new-row k rest-of-queens) (cons new-row rest-of-queens))
+
+(define (safe? k positions) 
+ (check-safe 
+  (car positions) 
+  1 
+  (cdr positions))) 
+
+
+(define (check-safe k distance rest) 
+ (cond ((null? rest) #t) 
+       ((= (car rest) k) #f) 
+       ((= (- (car rest) distance) k) #f) 
+       ((= (+ (car rest) distance) k) #f) 
+       (else (check-safe k (+ distance 1) (cdr rest))))) 
+
+; (display (queens 4))
+
+
+
 
 
 

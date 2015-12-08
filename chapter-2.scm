@@ -779,6 +779,45 @@
 
 
 
+; 2.44
+(define (up-split painter n)
+  (if (= n 0)
+      painter
+      (let ((smaller (up-split painter 
+                                  (- n 1))))
+        (below painter 
+                (beside smaller smaller)))))
+
+
+
+; 2.45
+(define (split f g)
+  (lambda (painter n)
+    (if (= 1 n)
+        painter
+        (let ((next ((split f g) painter (- n 1))))
+          (f painter (g next next))))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

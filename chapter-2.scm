@@ -800,11 +800,47 @@
 
 
 
+; 2.46
+(define (make-vect x y) (cons x y))
+(define (xcor-vect v) (car v))
+(define (ycor-vect v) (cdr v))
+(define (add-vect v1 v2) 
+  (cons (+ (xcor-vect v1) (xcor-vect v2)) 
+        (+ (ycor-vect v1) (ycor-vect v2))))
+(define (sub-vect v1 v2) 
+  (cons (- (xcor-vect v1) (xcor-vect v2)) 
+        (- (ycor-vect v1) (ycor-vect v2))))
+(define (add-vect s v) 
+  (cons (* s (xcor-vect v)) 
+        (* s (ycor-vect v))))
 
 
 
+; 2.47
+(define (make-frame origin edge1 edge2)
+  (list origin edge1 edge2))
+(define (origin-frame frame) (car frame))
+(define (edge1-frame frame) (car (cdr frame)))
+(define (edge2-frame frame) (car (cdr (cdr frame))))
+
+(define (make-frame origin edge1 edge2)
+  (cons origin (cons edge1 edge2)))
+(define (origin-frame frame) (car frame))
+(define (edge1-frame frame) (car (cdr frame)))
+(define (edge2-frame frame) (cdr (cdr frame)))
 
 
+; (define f (make-frame 1 2 3)) 
+; (display (origin-frame f))
+; (newline)
+; (display (edge1-frame f))
+; (newline)
+; (display (edge2-frame f))
+; (newline)
+
+
+
+; 2.48
 
 
 

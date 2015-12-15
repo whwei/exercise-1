@@ -742,19 +742,19 @@
     (if (= k 0)
         (list empty-board)
         (filter
-         (lambda (positions) 
-           (safe? k positions))
-         (flatmap
-          (lambda (rest-of-queens)
-            (map (lambda (new-row)
-                   (adjoin-position 
-                    new-row 
-                    k 
-                    rest-of-queens))
-                 (enumerate-interval 
-                  1 
-                  board-size)))
-          (queen-cols (- k 1))))))
+          (lambda (positions) 
+            (safe? k positions))
+          (flatmap
+            (lambda (rest-of-queens)
+              (map (lambda (new-row)
+                     (adjoin-position 
+                      new-row 
+                      k 
+                      rest-of-queens))
+                   (enumerate-interval 
+                   1 
+                   board-size)))
+            (queen-cols (- k 1))))))
   (queen-cols board-size))
 
 (define empty-board nil)
@@ -841,21 +841,43 @@
 
 
 ; 2.48
+(define (make-segment s e) (cons s e))
+(define (start-segment s) (car s))
+(define (end-segment s) (cdr s))
 
 
 
+; 2.53
+; (a b c)
+; ((george))
+; ((y1 y2))
+; (y1 y2)
+; #f => 1
+; #f
+; (red shoes blue socks)
 
 
 
+; 2.54
+(define (equal? a b)
+  (cond ((and (null? a) (null? b)) #t)
+        ((eq? (car a) (car b)) (equal? (cdr a) (cdr b)))
+        (else #f)))
+
+(display (equal? '(this is a list) 
+        '(this is a list)))
+(newline)
+(display (equal? '(this is a list) 
+        '(this (is a) list)))
 
 
 
+; 2.55
+; ''abracadabra => (quote (quote abracadabra))
 
 
 
-
-
-
+; 2.56
 
 
 

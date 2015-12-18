@@ -859,10 +859,10 @@
 
 
 ; 2.54
-(define (equal? a b)
-  (cond ((and (null? a) (null? b)) #t)
-        ((eq? (car a) (car b)) (equal? (cdr a) (cdr b)))
-        (else #f)))
+; (define (equal? a b)
+;   (cond ((and (null? a) (null? b)) #t)
+;         ((eq? (car a) (car b)) (equal? (cdr a) (cdr b)))
+;         (else #f)))
 
 ; (display (equal? '(this is a list) 
 ;         '(this is a list)))
@@ -920,7 +920,99 @@
   (cond ((=number? exp 0) 1)
         ((=number? exp 1) base)
         ((=number? base 1) 1)
-        (else (list '** base exp)))
+        (else (list '** base exp))))
+
+
+
+; 2.59
+(define (adjoin-set x set)
+  (if (element-of-set? x set)
+      set
+      (cons x set)))
+
+(define (element-of-set? x set)
+  (cond ((null? set) false)
+        ((equal? x (car set)) true)
+        (else (element-of-set? x (cdr set)))))
+
+(define (union-set s1 s2)
+  (cond ((and (not (null? s2)) (null? s1)) s2)
+        ((and (not (null? s1)) (null? s2)) s1)
+        ((element-of-set? (car s1) s2) (union-set (cdr s1) s2))
+        (else (cons (car s1) (union-set (cdr s1) s2)))))
+
+; (display (union-set '(1 3) '(2 4)))
+; (display (element-of-set? 1 '(1 2 3)))
+; (display (adjoin-set '(1) '(2 3)))
+
+
+
+
+; 2.60
+; Θ(1)
+(define (adjoin-set x set) (cons x set))
+
+; Θ(n)
+(define (union-set s1 s2) (append s1 s2))
+
+; Θ(n^2)
+(define (intersection-set s1 s2)
+  (cond ((or (null? s1) (null? s2)) nil)
+        ((element-of-set? (car s1) s2) 
+          (cons (car s1) (intersection-set (cdr s1) s2)))
+        (else (intersection-set (cdr s1) s2))))
+
+
+; (display (intersection-set '(1 1 2 3 4 4) '(4 2 2 2)))
+
+
+
+; 2.61
+(define (adjoin-set x set)
+  (cond ((null? set) (cons x nil))
+        ((not (< (car set) x)) (cons x set))
+        (else (append (cons (car set) nil) (adjoin-set x (cdr set))))))
+
+
+; (display (adjoin-set 3 '(1 2 3 4)))
+; (display (adjoin-set 0 '(1 2 3 4)))
+; (display (adjoin-set 10 '(1 2 3 4)))
+
+
+
+; 2.62
+(define (union-set s1 s2)
+  (cond ((null? s1) s2)
+        ((null? s2) s1)
+        (else (let ((x1 (car s1))
+                   (x2 (car s2)))
+                   (if (< x1 x2)
+                       (cons x1 (union-set (cdr s1) s2))
+                       (cons x2 (union-set s1 (cdr s2))))))))
+
+; (display (union-set '(1 2 3 4) '(2 3 4 5)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

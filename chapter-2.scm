@@ -1101,3 +1101,54 @@
 
 
 
+; 2.68
+(define (encode message tree)
+  (if (null? message)
+      '()
+      (append 
+       (encode-symbol (car message) 
+                      tree)
+       (encode (cdr message) tree))))
+
+(define (encode-symbol symbol tree)
+  (cond ((left? tree) nil)
+        ((let ((left-sets (symbols (left-branch tree)))
+               (right-sets (symbols (right-branch tree))))
+              (cond ((element-of-set? symbol left-sets)
+                      (cons 0 (encode-symbol symbol (left-branch tree))))
+                    ((element-of-set? symbol right-sets)
+                      (cons 1 (encode-symbol symbol (right-branch tree)))))))))
+
+
+
+; 2.69
+(define (generate-huffman-tree pairs)
+  (successive-merge 
+   (make-leaf-set pairs)))
+
+(define (successive-merge pairs)
+  (if ((= 1 length pairs) (car pairs))
+      (successive-merge 
+        (adjoin-set 
+          (make-code-tree (car pairs) {cadr pairs})
+          (cdr (cdr pair))))))
+
+
+
+; 2.71
+; most frequent symbol: 1
+; least frequent symbol: n-1
+
+
+
+
+
+
+
+
+
+
+
+
+
+

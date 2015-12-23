@@ -1130,7 +1130,7 @@
   (if ((= 1 length pairs) (car pairs))
       (successive-merge 
         (adjoin-set 
-          (make-code-tree (car pairs) {cadr pairs})
+          (make-code-tree (car pairs) (cadr pairs))
           (cdr (cdr pair))))))
 
 
@@ -1138,6 +1138,91 @@
 ; 2.71
 ; most frequent symbol: 1
 ; least frequent symbol: n-1
+
+
+
+; 2.73
+; there's no procedure to dispatch when exp is a number or variable
+
+(define (install-sum-package)
+  (define (sum exp)
+         (make-sum (deriv (addend exp) var)
+                   (deriv (augend exp) var)))
+  (put 'deriv '+ sum))
+
+(define (install-product-package)
+  (define (product exp)
+         (make-sum
+           (make-product 
+            (multiplier exp)
+            (deriv (multiplicand exp) var))
+           (make-product 
+            (deriv (multiplier exp) var)
+            (multiplicand exp))))
+  (put 'deriv '* product))
+
+
+(define (install-exponents-package)
+  (define (exponentiation exp)
+    (and (pair? exp) (eq? (car exp) '**)))
+  (put 'deriv '** exponentiation))
+
+; change the order of arguments of 'put
+
+
+
+; 2.74
+(define (get-record division name)
+  ((get 'record division) name))
+
+
+(define (get-salary division record)
+  ((get 'salary division) record))
+
+
+(define (find-employee-record divisions name)
+  (if (null? divisions)
+      nil
+      (let ((employee (get-record (car divisions) name)))
+           (if (null? employee)
+               (find-employee-record (cdr divisions) name)
+               employee))))
+
+; just install new 'record and 'salary into the table
+
+
+
+; 2.75
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

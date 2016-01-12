@@ -32,3 +32,81 @@
 ; (newline)
 ; (s 'reset-count)
 ; (display (s 'how-many-calls?))
+
+
+
+; 3.3
+; (define (make-account balance password)
+;   (define (withdraw amount)
+;     (if (>= balance amount)
+;         (begin (set! balance 
+;                      (- balance amount))
+;                balance)
+;         "Insufficient funds"))
+;   (define (deposit amount)
+;     (set! balance (+ balance amount))
+;     balance)
+;   (define (dispatch pwd m)
+;     (cond ((not (eq? pwd password)) (error "Incorrect password"))
+;           ((eq? m 'withdraw) withdraw)
+;           ((eq? m 'deposit) deposit)
+;           (else (error "Unknown request: 
+;                  MAKE-ACCOUNT" m))))
+;   dispatch)
+
+
+; (define acc 
+;   (make-account 100 'secret-password))
+; (newline)
+; (display ((acc 'secret-password 'withdraw) 40))
+; (newline)
+; (display ((acc 'some-other-password 'deposit) 50))
+
+
+
+
+; 3.4
+(define (call-the-cops amt)
+  (display 'call-the-cops))
+(define (make-account balance password)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin (set! balance 
+                     (- balance amount))
+               balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (let ((counter 1))
+    (lambda (pwd m)
+      (cond ((> counter 7) call-the-cops)
+            ((not (eq? pwd password)) 
+              (begin (set! counter (+ 1 counter))
+                     (error "Incorrect password")))
+            ((eq? m 'withdraw) withdraw)
+            ((eq? m 'deposit) deposit)
+            (else (error "Unknown request: 
+                   MAKE-ACCOUNT" m))))))
+
+
+(define acc 
+  (make-account 10000 'secret-password))
+(newline)
+(display ((acc 'wrong-password 'withdraw) 40))
+(display ((acc 'wrong-password 'withdraw) 40))
+(display ((acc 'wrong-password 'withdraw) 40))
+(display ((acc 'wrong-password 'withdraw) 40))
+(display ((acc 'wrong-password 'withdraw) 40))
+(display ((acc 'wrong-password 'withdraw) 40))
+(display ((acc 'wrong-password 'withdraw) 40))
+(display ((acc 'wrong-password 'withdraw) 40))
+
+
+
+
+
+
+
+
+

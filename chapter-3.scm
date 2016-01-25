@@ -90,23 +90,106 @@
                    MAKE-ACCOUNT" m))))))
 
 
-(define acc 
-  (make-account 10000 'secret-password))
+; (define acc 
+;   (make-account 10000 'secret-password))
+; (newline)
+; (display ((acc 'wrong-password 'withdraw) 40))
+; (display ((acc 'wrong-password 'withdraw) 40))
+; (display ((acc 'wrong-password 'withdraw) 40))
+; (display ((acc 'wrong-password 'withdraw) 40))
+; (display ((acc 'wrong-password 'withdraw) 40))
+; (display ((acc 'wrong-password 'withdraw) 40))
+; (display ((acc 'wrong-password 'withdraw) 40))
+; (display ((acc 'wrong-password 'withdraw) 40))
+
+
+
+
+; 3.5
+; (define (monte-carlo trials experiment)
+;   (define (iter trials-remaining trials-passed)
+;     (cond ((= trials-remaining 0)
+;            (/ trials-passed trials))
+;           ((experiment)
+;            (iter (- trials-remaining 1) 
+;                  (+ trials-passed 1)))
+;           (else
+;            (iter (- trials-remaining 1) 
+;                  trials-passed))))
+;   (iter trials 0))
+
+; (define (predicate x y)
+;   (< (+ (expt (- x 5) 2) (expt (- y 7) 2))
+;      (expt 3 2)))
+
+; (define (estimate-integral p x1 x2 y1 y2 trials)
+;   (define (experiment)
+;     (p (random-in-range x1 x2)
+;        (random-in-range y1 y2)))
+;   (monte-carlo trials experiment))
+
+; (define pi 
+;   (/ (estimate-integral predicate 2.0 8.0 4.0 11.0 10000)
+;      9))
+
+
+
+
+; 3.6
+(define random-init 0) 
+(define (rand-update x) (+ x 1)) ; A not-very-evolved PNRG 
+
+(define rand 
+ (let ((current-value random-init)) 
+   (define (dispatch message) 
+     (cond ((eq? message 'reset) 
+             (lambda (new-value) (set! current-value new-value)))
+           ((eq? message 'generate) 
+             (begin (set! current-value (rand-update current-value)) 
+                    current-value)))) 
+   dispatch)) 
+
+; (display (rand 'generate))
+; (newline) 
+; ; 1 
+; (display ((rand 'reset) 0))
+; (newline) 
+; ; 0 
+; (display (rand 'generate))
+; (newline) 
+; ; 1 
+
+
+
+; 3.7
+; (define (make-joint account password new-password)
+;   (if (number? ((account password 'deposit) 0)) 
+;       (lambda (pwd command)
+;         (if (eq? new-password pwd)
+;             (account password command)
+;             (error "Incorrect password")))
+;       (error "Invalid account")))
+
+
+
+; 3.8
+; (define f
+;   (let ((x 1000000))
+;     (lambda (v)
+;       (if (= x 1000000)
+;           (set! x v)
+;           0))))
+
+(define f  
+  (let ((state 0)) 
+    (lambda (x) 
+      (let ((xx state))
+           (begin (set! state x) xx))))) 
+
 (newline)
-(display ((acc 'wrong-password 'withdraw) 40))
-(display ((acc 'wrong-password 'withdraw) 40))
-(display ((acc 'wrong-password 'withdraw) 40))
-(display ((acc 'wrong-password 'withdraw) 40))
-(display ((acc 'wrong-password 'withdraw) 40))
-(display ((acc 'wrong-password 'withdraw) 40))
-(display ((acc 'wrong-password 'withdraw) 40))
-(display ((acc 'wrong-password 'withdraw) 40))
-
-
-
-
-
-
+(display (+ (f 0) (f 1)))
+(newline)
+(display (+ (f 1) (f 0)))
 
 
 

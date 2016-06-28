@@ -104,3 +104,31 @@
   )
 )
 
+
+
+; 4.8
+(define (named-let? expr)
+  (and (let? expr) (symbol? (cadr expr))))
+(define (named-let-func-name expr)
+  (cadr expr))
+(define (named-let-func-params expr)
+  (map car (caddr expr)))
+(define (named-let-func-inits expr)
+  (map cadr (caddr expr)))
+(define (named-let-body expr)
+  (cdr (cddr expr)))
+; define a function whose name is (named-let-func-name expr) and takes (named-let-func-params expr)
+; as arguments
+(define (named-let-func expr)
+  (list 'define 
+        (cons (named-let-func-name expr) (named-let-func-params expr))
+        (named-let-func-body expr)))
+(define (named-let->combination expr)
+  (if (named-let? expr)
+      (sequence-exp (list (named-let-func expr) (cons (named-let-func-name expr) (named-let-func-inits expr)))
+      (cons (make-lambda (let-var expr) (let-body expr))
+        (let-exp expr))))
+
+
+
+
